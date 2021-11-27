@@ -22,8 +22,13 @@ import { SpotifyService } from "@/services/spotifyService";
 
 @Component
 export default class HelloWorld extends Vue {
+  constructor() {
+    super();
+    this.getInfo();
+  }
   @Prop() private msg!: string;
   getlist(): void {
+    debugger;
     let spotifyObj: ISpotifyService = new SpotifyService();
 
     spotifyObj.getRecentlyPlayedList().then((result: any) => {
@@ -32,21 +37,57 @@ export default class HelloWorld extends Vue {
   }
   login(): void {
     window.location.href =
-      "https://accounts.spotify.com/authorize?response_type=code&client_id=f0e834a4b9a24469a41bb0dfe9c77d25&scope=user-read-private user-read-email&redirect_uri=http://localhost:8080/&state=FGTVPAOJFUGRWTOS";
-    // this.$router.push(
-    //   "https://accounts.spotify.com/authorize?response_type=code&client_id=f0e834a4b9a24469a41bb0dfe9c77d25&scope=user-read-private user-read-email&redirect_uri=http://localhost:8080/&state=FGTVPAOJFUGRWTOS"
-    // );
-    // this.$router.push({
-    //   name: "login",
-    //   params: {
-    //     response_type: "code",
-    //     client_id: "f0e834a4b9a24469a41bb0dfe9c77d25",
-    //     scope: "user-read-private user-read-email",
-    //     redirect_uri: "http://localhost:8080/",
-    //     state: "FGTVPAOJFUGRWTOS",
-    //   },
-    // });
-    console.log("Click!");
+      "https://accounts.spotify.com/authorize?response_type=code&client_id=f0e834a4b9a24469a41bb0dfe9c77d25&scope=user-read-private%20user-read-email&redirect_uri=http://localhost:8080/&state=FGTVPAOJFUGRWTOD";
+  }
+
+  getInfo(): void {
+    let code = new URL(location.href).searchParams.get("code");
+
+    if (!code) return;
+
+    let client_id = "f0e834a4b9a24469a41bb0dfe9c77d25";
+    let client_secret = "fd10c53ef4d945c1b7073338e47db8b9";
+    let base64Code: string = btoa(client_id + ":" + client_secret);
+
+    const authOption = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Basic " + base64Code,
+      },
+      body: JSON.stringify({
+        code: code,
+        redirect_uri: "http://localhost:8080/",
+        grant_type: "authorization_code",
+      }),
+    };
+
+    // fetch("https://accounts.spotify.com/api/token", authOption)
+    //   .then((response) => {
+    //     let result = response.json();
+    //     console.log(result);
+    //   })
+    //   .then((data) => {
+    //     console.log(data);
+    //   });
+
+    fetch("https://accounts.spotify.com/api/token", authOption)
+      .then(async (response) => {
+        const data = await response.json();
+
+        // check for error response
+        if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+
+        console.log(data);
+        
+      })
+      .catch((error) => {        
+        console.error("There was an error!", error);
+      });
   }
 }
 </script>

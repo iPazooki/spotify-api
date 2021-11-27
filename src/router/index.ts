@@ -19,10 +19,6 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
-  {
-    path: "https://accounts.spotify.com/authorize?:response_type&:client_id&:scope&:redirect_uri&:state",
-    name: "login",
-  },
 ];
 
 const router = new VueRouter({
