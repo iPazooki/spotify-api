@@ -1,6 +1,8 @@
 import SpotifyWebApi from "spotify-web-api-js";
 import ISpotifyService from "@/services/Interfaces/spotifyService";
 import { injectable } from "inversify-props";
+import Song from "@/model/song";
+import _ from "lodash";
 
 @injectable()
 export default class SpotifyService implements ISpotifyService {
@@ -97,22 +99,55 @@ export default class SpotifyService implements ISpotifyService {
 
   spotifyLogin(): void {
     const state = this.generateRandom(16);
-    const scope = "user-library-read playlist-read-private user-read-recently-played user-read-currently-playing";
+    const scope =
+      "user-library-read playlist-read-private user-read-recently-played user-read-currently-playing";
 
     window.location.href = `https://accounts.spotify.com/authorize?response_type=code&client_id=${this.client_id}&scope=${scope}&redirect_uri=${this.redirect_url}&state=${state}`;
   }
 
-  public async getRecentlyPlayedList(
-    artistName?: string
-  ): Promise<SpotifyApi.UsersRecentlyPlayedTracksResponse> {
+  public async getRecentlyPlayedList(artistName?: string): Promise<Song[]> {
     await this.spotifyRefreshToken();
-    console.log("Here is access key:");
-    console.log(this.spotify.getAccessToken());
-    return await this.spotify.getMyRecentlyPlayedTracks();
+
+    const option: SpotifyApi.RecentlyPlayedParameterObject = { limit: 5 };
+
+    const result: SpotifyApi.UsersRecentlyPlayedTracksResponse =
+      await this.spotify.getMyRecentlyPlayedTracks(option);
+
+    const songList: Song[] = result.items
+      .map((item: SpotifyApi.PlayHistoryObject) => {
+        return new Song(
+          item.track.name,
+          (<any>item.track).album.images[0].url,
+          item.track.artists[0].name,
+          new Date(item.played_at)
+        );
+      })
+      .sort((x) => x.playedDate.getTime());
+
+    if (artistName) {
+      return songList.filter((s: Song) => s.Artist == artistName);
+    } else {
+      return songList;
+    }
   }
 
-  getRecentlyPlayedArtists(): any[] {
-    throw new Error("Method not implemented.");
+  async getRecentlyPlayedArtists(): Promise<string[]> {
+    const songList = await this.getRecentlyPlayedList();
+
+    if (songList) {
+      const songGouped = _.groupBy(songList, (s: Song) => {
+        return s.Artist;
+      });
+
+      const result: string[] = [];
+
+      _.forEach(songGouped, (song: [Song, ...Song[]]) => {
+        result.push(song[0].Artist);
+      });
+      return result;
+    } else {
+      return [];
+    }
   }
 
   private generateRandom(length: number): string {

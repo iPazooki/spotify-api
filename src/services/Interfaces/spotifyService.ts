@@ -1,3 +1,5 @@
+import Song from "@/model/song";
+
 export default interface ISpotifyService {
   spotifyLogin(): void;
 
@@ -5,9 +7,7 @@ export default interface ISpotifyService {
 
   spotifyRefreshToken(): Promise<void>;
 
-  getRecentlyPlayedList(
-    artistName?: string
-  ): Promise<SpotifyApi.UsersRecentlyPlayedTracksResponse>;
+  getRecentlyPlayedList(artistName?: string): Promise<Song[]>;
 
-  getRecentlyPlayedArtists(): any[];
+  getRecentlyPlayedArtists(): Promise<string[]>;
 }

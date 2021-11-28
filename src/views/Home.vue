@@ -1,9 +1,10 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
-    <div class="container">
+
+    <b-container>
       <SongList />
-    </div>
+    </b-container>
   </div>
 </template>
 

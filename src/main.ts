@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { BootstrapVue, ButtonPlugin, IconsPlugin } from "bootstrap-vue";
+import { BootstrapVue, ButtonPlugin, IconsPlugin, BootstrapVueIcons  } from "bootstrap-vue";
 import buildDependencyContainer from "@/app.container";
 import App from "./App.vue";
 import router from "./router";
@@ -13,8 +13,9 @@ buildDependencyContainer();
 
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons)
 Vue.use(IconsPlugin);
-Vue.use(ButtonPlugin)
+Vue.use(ButtonPlugin);
 
 Vue.config.productionTip = false;
 
