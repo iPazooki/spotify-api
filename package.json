@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "inversify-props": "^2.2.6",
+    "reflect-metadata": "^0.1.13",
     "spotify-web-api-js": "^1.5.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
