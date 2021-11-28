@@ -1,23 +1,26 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
+  <div class="row">
+    <div class="col">
+      <h2>Her you can see list of your recently played tracks:</h2>
 
-    <h2>Recentrly played list:</h2>
-    <button v-on:click="login">Login</button>
-    <button v-on:click="getlist">Show list</button>
-    <div>
-      <ul>
-        <li v-for="song in songList" v-bind:key="song">
-          {{ song.track.name }}
-        </li>
-      </ul>
+      <div>
+        <b-alert variant="success" show>Please login:</b-alert>
+        <b-button variant="success" v-on:click="login">Login</b-button>
+      </div>
+
+      <div>
+        <b-button variant="outline-primary" v-on:click="getlist"
+          >Retrive list</b-button
+        >
+
+        <div>
+          <ul>
+            <li v-for="song in songList" v-bind:key="song">
+              {{ song.track.name }}
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -28,12 +31,9 @@ import ISpotifyService from "@/services/Interfaces/spotifyService";
 import { Inject } from "inversify-props";
 
 @Component
-export default class HelloWorld extends Vue {
+export default class SongList extends Vue {
   @Inject()
   private spotifyService!: ISpotifyService;
-
-  @Prop()
-  private msg!: string;
 
   @Prop()
   private songList!: any[];
@@ -45,6 +45,7 @@ export default class HelloWorld extends Vue {
   async getlist(): Promise<void> {
     let list = await this.spotifyService.getRecentlyPlayedList();
     this.songList = list.items;
+    console.log("list: " + this.songList);
   }
 
   login(): void {
