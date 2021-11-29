@@ -21,7 +21,8 @@ To run the project, please:
 
 ### TODO:
 
- 1. Spotify client Id and Secret Id are hard-coded which is wrong. In the real world, these information should be replaced during CI/CD and they can be stored in *Azure vault* or *AWS secrets manager*
+ 1. Spotify **Client Id** and **Secret Id** are hard-coded which is wrong and it's a security issue. In the real world, this sensitive information should be replaced during CI/CD and they can be stored in *Azure vault* or *AWS secrets manager*
  2. E2E are Unit tests that are not completed and have poor code coverage.
  3. On refresh of the page, any applied filter should be persisted.
  4. Automatically update page every 30 seconds
+ 5. Using Docker
