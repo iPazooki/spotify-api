@@ -1,12 +1,18 @@
 import { shallowMount } from "@vue/test-utils";
 import SongList from "@/components/SongList.vue";
 
-describe("HelloWorld.vue", () => {
+describe("SongList.vue", () => {
   it("renders props.msg when passed", () => {
-    const msg = "new message";
+    const artists: string[] = ["Jack", "Sam"];
+
     const wrapper = shallowMount(SongList, {
-      propsData: { msg },
+      data() {
+        return {
+          artists: artists,
+        };
+      },
     });
-    expect(wrapper.text()).toMatch(msg);
+
+    expect(wrapper.find(".nav-link").exists()).toBeTruthy();
   });
 });
