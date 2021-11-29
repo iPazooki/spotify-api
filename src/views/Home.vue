@@ -2,7 +2,7 @@
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
 
-    <b-container>
+    <b-container>      
       <SongList />
     </b-container>
   </div>

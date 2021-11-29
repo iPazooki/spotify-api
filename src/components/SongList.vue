@@ -2,7 +2,8 @@
   <div>
     <b-row>
       <div class="col">
-        <h2>Your recently played tracks:</h2>
+        <h2 v-if="$route.params.artist">Artist: {{ $route.params.artist }}</h2>
+        <h2 v-else>Your recently played tracks:</h2>
       </div>
     </b-row>
 
@@ -29,9 +30,14 @@
     <b-row>
       <div class="col-2">
         <b-nav vertical class="left-menu">
-          <b-nav-item v-for="artist in artists" v-bind:key="artist">{{
+          <li class="nav-item" v-for="artist in artists" v-bind:key="artist">
+            <router-link :to="'/home/' + artist" class="nav-link">{{
+              artist
+            }}</router-link>
+          </li>
+          <!-- <b-nav-item v-for="artist in artists" v-bind:key="artist" >{{
             artist
-          }}</b-nav-item>
+          }}</b-nav-item>  -->
         </b-nav>
       </div>
       <div class="col-8">
@@ -84,10 +90,21 @@ export default class SongList extends Vue {
 
   protected async mounted(): Promise<void> {
     await this.getInfo();
+    await this.updateList();
+  }
+
+  protected async updated(): Promise<void> {
+    await this.updateList();
   }
 
   async getlist(): Promise<void> {
-    this.songList = await this.spotifyService.getRecentlyPlayedList();
+    await this.updateList();
+  }
+
+  async updateList(): Promise<void> {
+    this.songList = await this.spotifyService.getRecentlyPlayedList(
+      this.$router.currentRoute.params.artist
+    );
     this.artists = await this.spotifyService.getRecentlyPlayedArtists();
   }
 
