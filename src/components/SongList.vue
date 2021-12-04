@@ -35,11 +35,9 @@
               artist
             }}</router-link>
           </li>
-          <!-- <b-nav-item v-for="artist in artists" v-bind:key="artist" >{{
-            artist
-          }}</b-nav-item>  -->
         </b-nav>
       </div>
+
       <div class="col-8">
         <div>
           <div class="d-flex">
@@ -79,6 +77,9 @@ import Song from "@/model/song";
 
 @Component
 export default class SongList extends Vue {
+  // constructor(@Inject()private spotifyService: ISpotifyService) {
+  //   super();
+  // }
   @Inject()
   private spotifyService!: ISpotifyService;
 

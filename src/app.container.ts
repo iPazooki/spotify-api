@@ -4,5 +4,5 @@ import ISpotifyService from "@/services/Interfaces/spotifyService";
 import SpotifyService from "@/services/spotifyService";
 
 export default function buildDependencyContainer(): void {
-  container.addTransient<ISpotifyService>(SpotifyService);
+  container.addSingleton<ISpotifyService>(SpotifyService);
 }
