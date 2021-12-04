@@ -6,33 +6,34 @@
         <h2 v-else>Your recently played tracks:</h2>
       </div>
     </b-row>
-
-    <b-row>
+    <b-row v-if="!isListReady">
       <div class="col">
-        <p>
-          Please click on the login button and then click on the retrive button
-          to get your played tracks.
-        </p>
+        <p>Please login and give required access.</p>
+      </div>
+    </b-row>
+
+    <b-row v-if="!isListReady">
+      <div class="col">
+        <b-button variant="success" v-on:click="login" class="m-1"
+          >Login</b-button
+        >
       </div>
     </b-row>
 
     <b-row>
       <div class="col">
-        <b-button variant="success" v-on:click="login" class="m-1"
-          >Login</b-button
-        >
         <b-button variant="outline-primary" v-on:click="getlist"
           >Retrive list</b-button
         >
       </div>
     </b-row>
 
-    <b-row>
+    <b-row v-if="isListReady">
       <div class="col-2">
         <b-nav vertical class="left-menu">
           <li class="nav-item" v-for="artist in artists" v-bind:key="artist.id">
-            <router-link :to="'/home/' + artist" class="nav-link">{{
-              artist
+            <router-link :to="'/home/' + artist.name" class="nav-link">{{
+              artist.name
             }}</router-link>
           </li>
         </b-nav>
@@ -70,41 +71,47 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import ISpotifyService from "@/services/Interfaces/spotifyService";
 import { Inject } from "inversify-props";
 import Song from "@/model/song";
+import Artist from "@/model/artist";
 
 @Component
 export default class SongList extends Vue {
-  
   @Inject()
   private spotifyService!: ISpotifyService;
 
-  @Prop()
-  private songList!: Song[];
+  @Prop({ required: false, default: false })
+  private isListReady!: boolean;
 
-  @Prop()
-  private artists!: string[];
+  @Prop({ required: false, default: false })
+  private isRetriveReady!: boolean;
+
+  private songList!: Song[];
+  private artists!: Artist[];
 
   protected async mounted(): Promise<void> {
     await this.getInfo();
-    await this.updateList();
+    //await this.updateList();
   }
 
-  protected async updated(): Promise<void> {
-    await this.updateList();
-  }
+  // protected async updated(): Promise<void> {
+  //   await this.updateList();
+  // }
 
   async getlist(): Promise<void> {
-    await this.updateList();
+    this.isListReady = await this.updateList();
   }
 
-  async updateList(): Promise<void> {
+  async updateList(): Promise<boolean> {
     this.songList = await this.spotifyService.getRecentlyPlayedList(
       this.$router.currentRoute.params.artist
     );
+
     this.artists = await this.spotifyService.getRecentlyPlayedArtists();
+
+    return true;
   }
 
   login(): void {

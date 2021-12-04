@@ -1,3 +1,4 @@
+import Artist from "@/model/artist";
 import Song from "@/model/song";
 
 export default interface ISpotifyService {
@@ -9,5 +10,5 @@ export default interface ISpotifyService {
 
   getRecentlyPlayedList(artistName?: string): Promise<Song[]>;
 
-  getRecentlyPlayedArtists(): Promise<string[]>;
+  getRecentlyPlayedArtists(): Promise<Artist[]>;
 }

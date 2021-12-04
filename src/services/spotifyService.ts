@@ -9,8 +9,8 @@ import Artist from "@/model/artist";
 export default class SpotifyService implements ISpotifyService {
   private spotify: SpotifyWebApi.SpotifyWebApiJs;
   private readonly redirect_url = "http://localhost:8080/";
-  private readonly client_id = "f0e834a4b9a24469a41bb0dfe9c77d25";
-  private readonly client_secret = "fd10c53ef4d945c1b7073338e47db8b9";
+  private readonly client_id = "";
+  private readonly client_secret = "";
   private readonly spotify_token_url = "https://accounts.spotify.com/api/token";
   private refreshToken = "";
 
@@ -19,6 +19,8 @@ export default class SpotifyService implements ISpotifyService {
   }
 
   async spotifyRefreshToken(): Promise<void> {
+    if (!this.refreshToken) return;
+
     const base64Code: string = btoa(this.client_id + ":" + this.client_secret);
 
     const authOption = {
@@ -33,8 +35,6 @@ export default class SpotifyService implements ISpotifyService {
       }),
     };
 
-    console.log("GET NEW AC, REFRESH TOKEN: " + this.refreshToken);
-
     await fetch(this.spotify_token_url, authOption)
       .then(async (response) => {
         const data = await response.json();
@@ -43,10 +43,7 @@ export default class SpotifyService implements ISpotifyService {
           const error = (data && data.message) || response.status;
           return Promise.reject(error);
         }
-
         this.spotify.setAccessToken(data.access_token);
-        this.refreshToken = data.refresh_token;
-        console.log("NEW REFRESH TOKEN IS: " + this.refreshToken);
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -84,7 +81,6 @@ export default class SpotifyService implements ISpotifyService {
 
         this.spotify.setAccessToken(data.access_token);
         this.refreshToken = data.refresh_token;
-        console.log("REFRESH IS: " + this.refreshToken);
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -126,7 +122,7 @@ export default class SpotifyService implements ISpotifyService {
     }
   }
 
-  async getRecentlyPlayedArtists(): Promise<string[]> {
+  async getRecentlyPlayedArtists(): Promise<Artist[]> {
     const songList = await this.getRecentlyPlayedList();
 
     if (songList) {
@@ -134,12 +130,12 @@ export default class SpotifyService implements ISpotifyService {
         return s.artist;
       });
 
-      const result: string[] = [];
+      const artists: Artist[] = [];
 
       _.forEach(songGouped, (song: [Song, ...Song[]]) => {
-        result.push(song[0].artist.name);
+        artists.push(song[0].artist);
       });
-      return result;
+      return artists;
     } else {
       return [];
     }
