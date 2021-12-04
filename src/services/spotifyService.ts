@@ -3,6 +3,7 @@ import ISpotifyService from "@/services/Interfaces/spotifyService";
 import { injectable } from "inversify-props";
 import Song from "@/model/song";
 import _ from "lodash";
+import Artist from "@/model/artist";
 
 @injectable()
 export default class SpotifyService implements ISpotifyService {
@@ -11,16 +12,10 @@ export default class SpotifyService implements ISpotifyService {
   private readonly client_id = "f0e834a4b9a24469a41bb0dfe9c77d25";
   private readonly client_secret = "fd10c53ef4d945c1b7073338e47db8b9";
   private readonly spotify_token_url = "https://accounts.spotify.com/api/token";
-  private readonly spotify_refresh_url =
-    "https://accounts.spotify.com/api/token";
   private refreshToken = "";
 
   constructor() {
     this.spotify = new SpotifyWebApi();
-
-    this.spotify.setAccessToken(
-      "AQAigM6VESZIoBJztOE6b2qnawiUR5HSCDLyMPzgzoVt6VhNe-r4v3Hfe6m_bJz-t9SMFG7XCN1qTfYuQCBtaEEVtIAJGYnAOgBTf6MSphvkaSHuy_X5sXAsiUYV0jEh31jK_yjsu5dwXPttsAA3sU-bnfxGFLjpP_IAoeNFoDsM1iFsRxJ-tybhpRLdgpUoPHsWyxMRKnPHy25vnk0"
-    );
   }
 
   async spotifyRefreshToken(): Promise<void> {
@@ -38,7 +33,9 @@ export default class SpotifyService implements ISpotifyService {
       }),
     };
 
-    await fetch(this.spotify_refresh_url, authOption)
+    console.log("GET NEW AC, REFRESH TOKEN: " + this.refreshToken);
+
+    await fetch(this.spotify_token_url, authOption)
       .then(async (response) => {
         const data = await response.json();
 
@@ -49,8 +46,7 @@ export default class SpotifyService implements ISpotifyService {
 
         this.spotify.setAccessToken(data.access_token);
         this.refreshToken = data.refresh_token;
-        console.log("New TOKEN: " + this.spotify.getAccessToken());
-        console.log("NEW Refresh TOKEN: " + this.refreshToken);
+        console.log("NEW REFRESH TOKEN IS: " + this.refreshToken);
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -88,9 +84,7 @@ export default class SpotifyService implements ISpotifyService {
 
         this.spotify.setAccessToken(data.access_token);
         this.refreshToken = data.refresh_token;
-
-        console.log("TOKEN: " + this.spotify.getAccessToken());
-        console.log("Refresh TOKEN: " + this.refreshToken);
+        console.log("REFRESH IS: " + this.refreshToken);
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -116,16 +110,17 @@ export default class SpotifyService implements ISpotifyService {
     const songList: Song[] = result.items
       .map((item: SpotifyApi.PlayHistoryObject) => {
         return new Song(
+          item.track.id,
           item.track.name,
           (<any>item.track).album.images[0].url,
-          item.track.artists[0].name,
+          new Artist(item.track.artists[0].id, item.track.artists[0].name),
           new Date(item.played_at)
         );
       })
       .sort((x) => x.playedDate.getTime());
 
     if (artistName) {
-      return songList.filter((s: Song) => s.Artist == artistName);
+      return songList.filter((s: Song) => s.artist.name == artistName);
     } else {
       return songList;
     }
@@ -136,13 +131,13 @@ export default class SpotifyService implements ISpotifyService {
 
     if (songList) {
       const songGouped = _.groupBy(songList, (s: Song) => {
-        return s.Artist;
+        return s.artist;
       });
 
       const result: string[] = [];
 
       _.forEach(songGouped, (song: [Song, ...Song[]]) => {
-        result.push(song[0].Artist);
+        result.push(song[0].artist.name);
       });
       return result;
     } else {

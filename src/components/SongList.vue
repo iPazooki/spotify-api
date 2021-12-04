@@ -30,7 +30,7 @@
     <b-row>
       <div class="col-2">
         <b-nav vertical class="left-menu">
-          <li class="nav-item" v-for="artist in artists" v-bind:key="artist">
+          <li class="nav-item" v-for="artist in artists" v-bind:key="artist.id">
             <router-link :to="'/home/' + artist" class="nav-link">{{
               artist
             }}</router-link>
@@ -43,9 +43,9 @@
           <div class="d-flex">
             <b-card
               v-for="song in songList"
-              v-bind:key="song"
-              v-bind:title="song.Title"
-              v-bind:img-src="song.ImageUrl"
+              v-bind:key="song.id"
+              v-bind:title="song.title"
+              v-bind:img-src="song.imageUrl"
               img-alt="track image"
               img-top
               style="max-width: 20rem"
@@ -54,7 +54,7 @@
               <b-card-text>
                 <p>
                   <span class="font-weight-bold">Artist:</span>
-                  {{ song.Artist }}
+                  {{ song.artist.name }}
                 </p>
               </b-card-text>
 
@@ -77,9 +77,7 @@ import Song from "@/model/song";
 
 @Component
 export default class SongList extends Vue {
-  // constructor(@Inject()private spotifyService: ISpotifyService) {
-  //   super();
-  // }
+  
   @Inject()
   private spotifyService!: ISpotifyService;
 
