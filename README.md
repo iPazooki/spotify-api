@@ -19,6 +19,13 @@ To run the project, please:
  2. For Unit Testing:
     - Run `yarn test:unit`
 
+## Libraries:
+  1. [vuejs](https://vuejs.org/)
+  2. [BootstrapVue](https://bootstrap-vue.org/)
+  3. [Inversify Props](https://github.com/CKGrafico/inversify-props#readme)
+  4. [Lodash](https://lodash.com/)
+  5. [Spotify Web API JS](https://github.com/JMPerez/spotify-web-api-js)
+  
 ### TODO:
 
  1. Spotify **Client Id** and **Secret Id** are hard-coded which is wrong and it's a security issue. In the real world, this sensitive information should be replaced during CI/CD and they can be stored in *Azure vault* or *AWS secrets manager*
