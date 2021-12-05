@@ -11,7 +11,8 @@ It is not for production and needs a lot of improvement.
 To run the project, please:
  1. Clone the project : `git clone git@github.com:iPazooki/spotify-api.git`
  2. Run this command in your terminal (Just for the first time): `yarn install`
- 3. Run this command to execute your application: `yarn serve`
+ 3. Go to your [Spotify dashboard](https://developer.spotify.com/dashboard/applications), copy **Client ID** and **Client Secret**, then past them in the **spotifyService.ts** file accordingly.
+ 4. Run this command to execute your application: `yarn serve`
 
 ## Testing:
  1. For E2E Testing:

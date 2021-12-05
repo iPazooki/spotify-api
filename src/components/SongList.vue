@@ -93,7 +93,6 @@ export default class SongList extends Vue {
 
   protected async mounted(): Promise<void> {
     await this.getInfo();
-    //await this.updateList();
   }
 
   // protected async updated(): Promise<void> {

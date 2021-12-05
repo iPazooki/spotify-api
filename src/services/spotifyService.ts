@@ -9,10 +9,10 @@ import Artist from "@/model/artist";
 export default class SpotifyService implements ISpotifyService {
   private spotify: SpotifyWebApi.SpotifyWebApiJs;
   private readonly redirect_url = "http://localhost:8080/";
-  private readonly client_id = "";
-  private readonly client_secret = "";
   private readonly spotify_token_url = "https://accounts.spotify.com/api/token";
   private refreshToken = "";
+  private readonly client_id = "";
+  private readonly client_secret = "";
 
   constructor() {
     this.spotify = new SpotifyWebApi();
